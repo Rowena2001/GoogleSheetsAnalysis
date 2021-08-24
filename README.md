@@ -1,2 +1,2 @@
 # GoogleSheetsAnalysis
-# author: Rowena Shi
+# Author Rowena Shi

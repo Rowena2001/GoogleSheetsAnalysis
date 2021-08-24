@@ -1,7 +1,11 @@
 from typing import SupportsComplex
 import gspread
+from statistics import *
 
-# accesses the Google spreadsheet
+__author__ = "Rowena Shi"
+
+# accesses the Google spreadsheet and worksheet
+# returns the worksheet
 def accessSheet(credentialsFile, accessScope, spreadsheetName):
     # Access Credentials.json and create READONLY scopes
     gc = gspread.service_account(filename=credentialsFile, scopes=accessScope)
@@ -14,11 +18,49 @@ def accessSheet(credentialsFile, accessScope, spreadsheetName):
 
     return wk
 
+# creates a dictionary of all the values inside the Google spreadsheet
+# uses functions getRowValues and getcolValues
+# returns a dictionary
+def createDictionary(wk):
+    print("\nHEADERS\n")
+    headerList = getRowValues(wk, 1)
+    print(headerList)
+
+    spreadsheetValuesDict = {}
+    spreadsheetValuesDict = {headerList[i]: getColValues(wk, i+1) for i in range(len(headerList))}
+
+    print("\n\n DICTIONARY VALUES \n" + str(spreadsheetValuesDict) + "\n")
+
+    return spreadsheetValuesDict
+
+# gets all values inside row of worksheet wk
+# returns a list of all the values
+def getRowValues(wk, row):
+    # gets row values
+    valuesList = wk.row_values(row)
+
+    return valuesList
+
+# gets all values inside column col of worksheet wk
+# removes the first value as this represents the header
+# returns a list of all the values
 def getColValues(wk, col):
     # gets column values
-    values_list = wk.col_values(col)
+    valuesList = wk.col_values(col)
+    del valuesList[0]
 
-    # prints each value
-    for i in values_list:
-        print(i)
+    return valuesList
 
+# determines how to analyze metrics depending on type of data
+def determineAnalysisType(wk, values):
+    if values[]
+
+# computes averages and returns them in a list
+# returns a list of all the values
+def computeAverages(values):
+    meanValue = mean(int(x) for x in values)
+    medianValue = median(int(x) for x in values)
+    modeValue = mode(int(x) for x in values)
+    avgList = [meanValue, medianValue, modeValue]
+
+    return avgList

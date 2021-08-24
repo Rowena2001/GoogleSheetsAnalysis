@@ -16,8 +16,9 @@ def accessSheet(credentialsFile, accessScope, spreadsheetName):
 
 def getColValues(wk, col):
     # gets column values
-    values_list = wk.col_values(1)
+    values_list = wk.col_values(col)
 
     # prints each value
     for i in values_list:
         print(i)
+

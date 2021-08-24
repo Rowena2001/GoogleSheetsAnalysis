@@ -10,3 +10,4 @@ wk = accessSheet(credentialsFile, accessScope, spreadsheetName)
 
 spreadsheetValuesDict = createDictionary(wk)
 
+createTallyDictionary(wk, spreadsheetValuesDict["Overall how would you rate EnactusHacks 2.0?"])

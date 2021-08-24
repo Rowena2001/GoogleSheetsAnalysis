@@ -29,7 +29,7 @@ def createDictionary(wk):
     spreadsheetValuesDict = {}
     spreadsheetValuesDict = {headerList[i]: getColValues(wk, i+1) for i in range(len(headerList))}
 
-    print("\n\n DICTIONARY VALUES \n" + str(spreadsheetValuesDict) + "\n")
+    print("\n\n DICTIONARY VALUES \n\n" + str(spreadsheetValuesDict) + "\n")
 
     return spreadsheetValuesDict
 
@@ -53,7 +53,19 @@ def getColValues(wk, col):
 
 # determines how to analyze metrics depending on type of data
 def determineAnalysisType(wk, values):
-    if values[]
+    pass
+
+# tracks the quantity of each answer
+def createTallyDictionary(wk, values):
+    tallyDictionary = {}
+    for i in values:
+        if i in tallyDictionary.keys():
+            tallyDictionary[i] += 1
+        else:
+            tallyDictionary[i] = 1
+
+    print("\n\n TALLY DICTIONARY VALUES \n\n" + str(tallyDictionary) + "\n")
+    return tallyDictionary
 
 # computes averages and returns them in a list
 # returns a list of all the values

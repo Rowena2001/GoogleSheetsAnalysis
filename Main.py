@@ -1,6 +1,6 @@
 from Functions import *
 
-credentialsFile = 'Credentials.json'
+credentialsFile = '/Users/rowenashi/TechProjects/Credentials/Credentials.json'
 accessScope = gspread.auth.READONLY_SCOPES
 spreadsheetName = "Copy of EnactusHacks 2.0 Participant Feedback (Responses)"
 

@@ -10,7 +10,7 @@ def accessSheet(credentialsFile, accessScope, spreadsheetName):
     # Access Credentials.json and create READONLY scopes
     gc = gspread.service_account(filename=credentialsFile, scopes=accessScope)
 
-    # Opens "Copy of EnactusHacks 2.0 Participant Feedback (Responses)" spreadsheet
+    # Opens spreadsheet
     sh = gc.open(spreadsheetName)
 
     # Gets the first sheet
@@ -26,12 +26,21 @@ def createDictionary(wk):
     headerList = getRowValues(wk, 1)
     print(headerList)
 
+    #created empty dictionary
     spreadsheetValuesDict = {}
+    # populates dictionary using headers as the keys
     spreadsheetValuesDict = {headerList[i]: getColValues(wk, i+1) for i in range(len(headerList))}
 
     print("\n\n DICTIONARY VALUES \n\n" + str(spreadsheetValuesDict) + "\n")
 
     return spreadsheetValuesDict
+
+# determines how to analyze metrics depending on type of data
+def analyze(wk, key, values):
+    frequencyDictionary = createFrequencyDictionary(wk, values)
+    if numericKeys(frequencyDictionary):
+        print(key)
+        computeAverages(values)
 
 # gets all values inside row of worksheet wk
 # returns a list of all the values
@@ -51,21 +60,36 @@ def getColValues(wk, col):
 
     return valuesList
 
-# determines how to analyze metrics depending on type of data
-def determineAnalysisType(wk, values):
-    pass
+# tracks the frequency of each answer
+def createFrequencyDictionary(wk, values):
+    # creates empty dictionary
+    frequencyDictionary = {}
 
-# tracks the quantity of each answer
-def createTallyDictionary(wk, values):
-    tallyDictionary = {}
+    # populates dictionary with answers as keys, and frequency as values
     for i in values:
-        if i in tallyDictionary.keys():
-            tallyDictionary[i] += 1
+        # if answer exists as a key, add 1 to the frequency
+        if i in frequencyDictionary.keys():
+            frequencyDictionary[i] += 1
+        # answer does not exist as a key, make frequency 1
         else:
-            tallyDictionary[i] = 1
+            frequencyDictionary[i] = 1
 
-    print("\n\n TALLY DICTIONARY VALUES \n\n" + str(tallyDictionary) + "\n")
-    return tallyDictionary
+    print("\n\n TALLY DICTIONARY VALUES \n\n" + str(frequencyDictionary) + "\n")
+    return frequencyDictionary
+
+# checks if the keys of a dicationary are numeric
+# returns true if numeric
+def numericKeys(dictionary):
+    isNumeric = False
+    for i in dictionary.keys():
+        # sets isNumeric if key is numeric
+        # continues iterating through keys
+        if i.isdigit():
+            isNumeric = True
+        # breaks if key is not numeric
+        else:
+            break
+    return isNumeric
 
 # computes averages and returns them in a list
 # returns a list of all the values

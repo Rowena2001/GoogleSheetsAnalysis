@@ -1,7 +1,9 @@
-from typing import SupportsComplex
 import gspread
 from statistics import mean, median, mode
-from nltk import *
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
 
 __author__ = "Rowena Shi"
 
@@ -34,31 +36,27 @@ def createDictionary(wk, startCol, startRow, endCol):
     for i in range(len(headerList[0])):
         spreadsheetValuesDict[headerList[0][i]] = valuesList[i]
 
-    print("\n\n DICTIONARY VALUES \n\n" + str(spreadsheetValuesDict) + "\n")
-
     return spreadsheetValuesDict
 
 # determines how to analyze metrics depending on type of data
 def summarize(wk, dictionary):
-    print("SUMMARY")
+    print("\nSUMMARY\n")
     for key in dictionary.keys():
+
+        print("\n", key, "\n")
+
         frequencyDictionary = createFrequencyDictionary(wk, dictionary[key])
         if numericAnswer(frequencyDictionary):
-            print(key)
-            averagesList = computeAverages(dictionary[key])
-            print(averagesList)
+            computeAverages(dictionary[key])
         elif multipleChoice(frequencyDictionary):
-            print("\nMultiple Choice", frequencyDictionary)
+            formatMCSummary(frequencyDictionary)
         else:
-            pass
-        #     sentimentAnalysis()
+            createWordCloud(frequencyDictionary)
 
 
 # gets all values inside row of worksheet wk
 # returns a list of all the values
 def getHeaders(wk, startCol, startRow, endCol):
-
-    print("\nHEADERS\n")
 
     #  sets header cell range
     startCell = startCol + startRow
@@ -66,8 +64,6 @@ def getHeaders(wk, startCol, startRow, endCol):
     
     # gets header values
     valuesList = wk.get(startCell+':'+endCell)
-    
-    print(valuesList)
 
     return valuesList
 
@@ -88,8 +84,6 @@ def getColValues(wk, startCol, endCol):
 
         valuesList.append(colValuesList)
 
-    print("\nCOLUMN VALUES\n", valuesList)
-
     return valuesList
 
 # tracks the frequency of each answer
@@ -108,7 +102,6 @@ def createFrequencyDictionary(wk, values):
             else:
                 frequencyDictionary[answer] = 1
 
-    print("\n\n FREQUENCY DICTIONARY VALUES \n\n" + str(frequencyDictionary) + "\n")
     return frequencyDictionary
 
 # checks if the keys/answers of a dicationary are numeric
@@ -142,17 +135,30 @@ def computeAverages(values):
     meanValue = mean(int(x) for x in values)
     medianValue = median(int(x) for x in values)
     modeValue = mode(int(x) for x in values)
-    avgList = [meanValue, medianValue, modeValue]
 
-    return avgList
+    print("\tMean: ", meanValue, "\n\tMedian: ", medianValue, "\n\tMode: ", modeValue, "\n")
 
+# formats and prints the MC summary
 def formatMCSummary(dictionary):
-    pass
+    for key in dictionary.keys():
+        print("\t", key, ":", dictionary[key])
 
-def sentimentAnalysis(dictionary):
+# creates a word cloud for non-numeric and non-MC answers
+# visually shows the most common words
+def createWordCloud(dictionary):
     words = []
+    stopWords = set(stopwords.words("english"))
+
     for key in dictionary.keys():
         keySplit = key.split()
         for word in keySplit:
-            word.strip()
-            words.append(word)
+            if word not in stopWords:
+                words.append(word.strip('''!()-[]{};:'"\,<>./?@#$%^&*_~''').lower())
+    
+    joinWords = ' '.join([word for word in words])
+
+    wordcloud = WordCloud(width=1600, height=800, max_font_size=200, background_color="black").generate(joinWords)
+    plt.figure(figsize=(12,10))
+    plt.imshow(wordcloud)
+    plt.axis("off")
+    plt.show()

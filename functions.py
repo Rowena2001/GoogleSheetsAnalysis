@@ -40,12 +40,19 @@ def createDictionary(wk, startCol, startRow, endCol):
     return spreadsheetValuesDict
 
 # determines how to analyze metrics depending on type of data
-def analyze(wk, dictionary):
+def summarize(wk, dictionary):
+    print("SUMMARY")
     for key in dictionary.keys():
         frequencyDictionary = createFrequencyDictionary(wk, dictionary[key])
-        if numericKeys(frequencyDictionary):
+        if numericAnswer(frequencyDictionary):
             print(key)
-            computeAverages(dictionary[key])
+            averagesList = computeAverages(dictionary[key])
+            print(averagesList)
+        elif multipleChoice(frequencyDictionary):
+            print("\nMultiple Choice", frequencyDictionary)
+        # else:
+        #     sentimentAnalysis()
+
 
 # gets all values inside row of worksheet wk
 # returns a list of all the values
@@ -91,20 +98,22 @@ def createFrequencyDictionary(wk, values):
     frequencyDictionary = {}
 
     # populates dictionary with answers as keys, and frequency as values
-    for i in values:
-        # if answer exists as a key, add 1 to the frequency
-        if i in frequencyDictionary.keys():
-            frequencyDictionary[i] += 1
-        # answer does not exist as a key, make frequency 1
-        else:
-            frequencyDictionary[i] = 1
+    for value in values:
+        answersList  = value.split(", ")
+        for answer in answersList:
+            # if answer exists as a key, add 1 to the frequency
+            if answer in frequencyDictionary.keys():
+                frequencyDictionary[answer] += 1
+            # answer does not exist as a key, make frequency 1
+            else:
+                frequencyDictionary[answer] = 1
 
-    print("\n\n TALLY DICTIONARY VALUES \n\n" + str(frequencyDictionary) + "\n")
+    print("\n\n FREQUENCY DICTIONARY VALUES \n\n" + str(frequencyDictionary) + "\n")
     return frequencyDictionary
 
-# checks if the keys of a dicationary are numeric
+# checks if the keys/answers of a dicationary are numeric
 # returns true if numeric
-def numericKeys(dictionary):
+def numericAnswer(dictionary):
     isNumeric = False
     for i in dictionary.keys():
         # sets isNumeric if key is numeric
@@ -115,6 +124,17 @@ def numericKeys(dictionary):
         else:
             break
     return isNumeric
+
+# checks if the answers are multiple choice by seeing if the frequencies are greater than  1
+# this assumes that non-MC answers are all different, meaning that the frequency must be 1
+# returns true if MC
+def multipleChoice(dictionary):
+    isMC = False
+    for frequency in dictionary.values():
+        if frequency > 1:
+            isMC = True
+            break
+    return isMC
 
 # computes averages and returns them in a list
 # returns a list of all the values

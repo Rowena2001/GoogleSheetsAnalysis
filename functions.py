@@ -1,8 +1,7 @@
 from typing import SupportsComplex
 import gspread
-from statistics import *
-
-from pyasn1.type.univ import Null
+from statistics import mean, median, mode
+from nltk import *
 
 __author__ = "Rowena Shi"
 
@@ -50,7 +49,8 @@ def summarize(wk, dictionary):
             print(averagesList)
         elif multipleChoice(frequencyDictionary):
             print("\nMultiple Choice", frequencyDictionary)
-        # else:
+        else:
+            pass
         #     sentimentAnalysis()
 
 
@@ -145,3 +145,14 @@ def computeAverages(values):
     avgList = [meanValue, medianValue, modeValue]
 
     return avgList
+
+def formatMCSummary(dictionary):
+    pass
+
+def sentimentAnalysis(dictionary):
+    words = []
+    for key in dictionary.keys():
+        keySplit = key.split()
+        for word in keySplit:
+            word.strip()
+            words.append(word)

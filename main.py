@@ -1,6 +1,6 @@
 from functions import *
 from config import *
 
-wk = accessSheet(credentialsFile, accessScope, spreadsheetName)
-dictionary = createDictionary(wk, startCol, startRow, endCol)
-summarize(wk, dictionary)
+spreadSheet = accessSheet(credentialsFile, accessScope, spreadsheetName)
+dictionary = createDictionary(spreadSheet[1], startCol, startRow, endCol)
+summarize(spreadSheet[1], dictionary)

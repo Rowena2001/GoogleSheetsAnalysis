@@ -19,7 +19,7 @@ def accessSheet(credentialsFile, accessScope, spreadsheetName):
     # Gets the first sheet
     wk = sh.sheet1
 
-    return wk
+    return [sh, wk]
 
 # creates a dictionary of all the values inside the Google spreadsheet
 # uses functions getRowValues and getColValues
@@ -162,3 +162,6 @@ def createWordCloud(dictionary):
     plt.imshow(wordcloud)
     plt.axis("off")
     plt.show()
+
+    def writeSummary():
+        pass

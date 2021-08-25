@@ -1,7 +1,8 @@
 from typing import SupportsComplex
 import gspread
 from statistics import *
-from pandas import *
+
+from pyasn1.type.univ import Null
 
 __author__ = "Rowena Shi"
 
@@ -22,18 +23,17 @@ def accessSheet(credentialsFile, accessScope, spreadsheetName):
 # creates a dictionary of all the values inside the Google spreadsheet
 # uses functions getRowValues and getColValues
 # returns a dictionary
-def createDictionary(wk, startCol, startRow, endCol, endRow):
+def createDictionary(wk, startCol, startRow, endCol):
 
-    headerList = getHeaders(wk, startCol, startRow, endCol,)
+    headerList = getHeaders(wk, startCol, startRow, endCol)
+    valuesList = getColValues(wk, startCol, endCol)
 
     #created empty dictionary
     spreadsheetValuesDict = {}
 
     # populates dictionary using headers as the keys
-    for key in headerList:
-        startColLetter = startCol
-        spreadsheetValuesDict[key] = getColValues(wk, startColLetter, startRow, endRow)
-        startColLetter = chr((ord(startColLetter.upper())+1 - 65) % 26 + 65)
+    for i in range(len(headerList[0])):
+        spreadsheetValuesDict[headerList[0][i]] = valuesList[i]
 
     print("\n\n DICTIONARY VALUES \n\n" + str(spreadsheetValuesDict) + "\n")
 
@@ -67,33 +67,23 @@ def getHeaders(wk, startCol, startRow, endCol):
 # gets all values inside column col of worksheet wk
 # removes the first value as this represents the header
 # returns a list of all the values
-def getColValues(wk, startCol, startRow, endCol, endRow):
+def getColValues(wk, startCol, endCol):
 
     valuesList = []
 
-    # gets column values
-    print("COLUMN " + col)
+    numericStartCol = ord(startCol) - 64
+    numericEndCol = ord(endCol) - 64
 
-    for i in  range(endCol - startCol):
+    for i in range(numericEndCol - numericStartCol + 1):
 
-        # sets column range
-        startValueRow = int(startRow) + 1
-        startCell = col + str(startValueRow)
-        endCell = endCol + endRow
+        colValuesList = wk.col_values(numericStartCol + i)
+        del colValuesList[0]
 
-        colValuesList = wk.get(startCell+':'+endCell)
         valuesList.append(colValuesList)
 
-    print(valuesList)
+    print("\nCOLUMN VALUES\n", valuesList)
 
     return valuesList
-
-# converts columns from letter form to numeric form
-def getColumnNumbers(startCol, endCol):
-    numericStartCol = ord(startCol)
-    numericEndCol = ord(endCol)
-    print
-    return  [numericStartCol, numericEndCol]
 
 # tracks the frequency of each answer
 def createFrequencyDictionary(wk, values):

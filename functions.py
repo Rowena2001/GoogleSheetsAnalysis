@@ -40,30 +40,48 @@ def createDictionary(wk, startCol, startRow, endCol):
 
 # determines how to analyze metrics depending on type of data
 def summarize(wk, dictionary):
+
     print("\nSUMMARY\n")
+
+    summary = {}
+
     for key in dictionary.keys():
-
         print("\n", key, "\n")
-
         frequencyDictionary = createFrequencyDictionary(wk, dictionary[key])
         if numericAnswer(frequencyDictionary):
-            computeAverages(dictionary[key])
+            summary[key] = computeAverages(dictionary[key])
         elif multipleChoice(frequencyDictionary):
-            formatMCSummary(frequencyDictionary)
+            summary[key] = (formatMCSummary(frequencyDictionary))
         else:
             createWordCloud(frequencyDictionary)
 
+    return summary
+
+def writeSummary(sh, summary, startCol, startRow, endCol, endRow):
+    try:
+        summarySheet = sh.add_worksheet("Summary", 100, 100)
+    except:
+        summarySheet = sh.worksheet("Summary")
+        summarySheet.clear()
+    
+    row = 1
+    col = 1
+    for key in summary.keys():
+        summarySheet.update_cell(row, col, key)
+        row += 1
+        for values in summary[key]:
+            indentCol = 2
+            for value in values:
+                summarySheet.update_cell(row, indentCol, value)
+                indentCol += 1
+            row += 1
 
 # gets all values inside row of worksheet wk
 # returns a list of all the values
 def getHeaders(wk, startCol, startRow, endCol):
 
-    #  sets header cell range
-    startCell = startCol + startRow
-    endCell = endCol + startRow
-    
     # gets header values
-    valuesList = wk.get(startCell+':'+endCell)
+    valuesList = wk.get(getStringRange(startCol, startRow, endCol, startRow))
 
     return valuesList
 
@@ -137,11 +155,15 @@ def computeAverages(values):
     modeValue = mode(int(x) for x in values)
 
     print("\tMean: ", meanValue, "\n\tMedian: ", medianValue, "\n\tMode: ", modeValue, "\n")
+    return [["Mean", str(meanValue)], ["Median", str(medianValue)], ["Mode", str(modeValue)]]
 
 # formats and prints the MC summary
 def formatMCSummary(dictionary):
+    MCSummary = []
     for key in dictionary.keys():
         print("\t", key, ":", dictionary[key])
+        MCSummary.append([key, dictionary[key]])
+    return MCSummary
 
 # creates a word cloud for non-numeric and non-MC answers
 # visually shows the most common words
@@ -161,7 +183,11 @@ def createWordCloud(dictionary):
     plt.figure(figsize=(12,10))
     plt.imshow(wordcloud)
     plt.axis("off")
-    plt.show()
+    # plt.show()
+    return wordcloud
 
-    def writeSummary():
-        pass
+def getStringRange(startCol, startRow, endCol, endRow):
+    #  sets header cell range
+    startCell = startCol + startRow
+    endCell = endCol + endRow
+    return startCell+':'+endCell

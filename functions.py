@@ -38,7 +38,7 @@ def createDictionary(wk, startCol, startRow, endCol):
 
     return spreadsheetValuesDict
 
-# determines how to analyze metrics depending on type of data
+# determines summarizing method depending on data type
 def summarize(wk, dictionary):
 
     print("\nSUMMARY\n")

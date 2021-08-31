@@ -183,7 +183,7 @@ def createWordCloud(dictionary):
     plt.figure(figsize=(12,10))
     plt.imshow(wordcloud)
     plt.axis("off")
-    # plt.show()
+    plt.show()
     return wordcloud
 
 def getStringRange(startCol, startRow, endCol, endRow):
